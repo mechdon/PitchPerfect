@@ -20,9 +20,6 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        recordingInProgress.textColor = UIColor.darkGrayColor()
-        recordingInProgress.text = "Tap to Record"
-        
     }
 
     override func didReceiveMemoryWarning() {
