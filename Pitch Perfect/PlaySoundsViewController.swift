@@ -11,52 +11,44 @@ import AVFoundation
 
 class PlaySoundsViewController: UIViewController {
     
+    // Declare variables
     var audioPlayer:AVAudioPlayer!
     var receivedAudio:RecordedAudio!
-    
     var audioEngine:AVAudioEngine!
     var audioFile:AVAudioFile!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Initialise variables
         audioPlayer = AVAudioPlayer(contentsOfURL: receivedAudio.filePathUrl, error: nil)
         audioPlayer.enableRate = true
-        
         audioEngine = AVAudioEngine()
         audioFile = AVAudioFile(forReading: receivedAudio.filePathUrl, error: nil)
         
     }
     
-    func playAudio() {
+    //# MARK: - Play Audio Methods
+    
+    
+    // Reset Audio Engine
+    func resetAudioEngine() {
         audioPlayer.stop()
+        audioEngine.stop()
+        audioEngine.reset()
+    }
+    
+    // Play audio according to rate specified
+    func playAudioRate(rate: Float) {
+        resetAudioEngine()
+        audioPlayer.rate = rate
         audioPlayer.currentTime = 0.0
         audioPlayer.play()
     }
     
-    @IBAction func playSlowAudio(sender: UIButton) {
-        audioEngine.stop()
-        audioEngine.reset()
-        audioPlayer.rate = 0.5
-        playAudio()
-    }
-    
-    
-    @IBAction func playFastAudio(sender: UIButton) {
-        audioEngine.stop()
-        audioEngine.reset()
-        audioPlayer.rate = 2
-        playAudio()
-    }
-    
-    @IBAction func playChipmunkAudio(sender: UIButton) {
-        playAudioWithVariablePitch(1000)
-    }
-    
+    // Play audio with variable pitch
     func playAudioWithVariablePitch(pitch: Float) {
-        audioPlayer.stop()
-        audioEngine.stop()
-        audioEngine.reset()
+        resetAudioEngine()
         
         var audioPlayerNode = AVAudioPlayerNode()
         audioEngine.attachNode(audioPlayerNode)
@@ -74,17 +66,30 @@ class PlaySoundsViewController: UIViewController {
         
     }
     
+    // Play audio with slow rate
+    @IBAction func playSlowAudio(sender: UIButton) {
+        playAudioRate(0.5)
+    }
     
+    // Play audio with fast rate
+    @IBAction func playFastAudio(sender: UIButton) {
+        playAudioRate(2.0)
+    }
+    
+    // Play audio with Chipmunk effect
+    @IBAction func playChipmunkAudio(sender: UIButton) {
+        playAudioWithVariablePitch(1000)
+    }
+    
+    // Play audio with Darthvader effect
     @IBAction func playDarthvaderAudio(sender: UIButton) {
         playAudioWithVariablePitch(-1000)
     }
-    
-    
 
+    // Stop playing audio
     @IBAction func stopAudio(sender: UIButton) {
-        audioPlayer.stop()
+        resetAudioEngine()
     }
-    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
