@@ -11,10 +11,12 @@ import AVFoundation
 
 class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
 
+    //# MARK: Outlets for label and butons
     @IBOutlet weak var recordingInProgress: UILabel!
     @IBOutlet weak var stopAudio: UIButton!
     @IBOutlet weak var recordButton: UIButton!
     
+    // Declare variables
     var audioRecorder:AVAudioRecorder!
     var recordedAudio:RecordedAudio!
     
@@ -26,19 +28,25 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         super.didReceiveMemoryWarning()
     }
     
+    // Set label text and hide stop button
     override func viewWillAppear(animated: Bool) {
         recordingInProgress.textColor = UIColor.darkGrayColor()
         recordingInProgress.text = "Tap to Record"
         stopAudio.hidden = true
     }
-
+    
+    
+    //# MARK: - Record Audio Method
     @IBAction func recordAudio(sender: UIButton) {
+        
+        // Show stop button and change label text
         stopAudio.hidden = false
         recordingInProgress.textColor = UIColor.redColor()
         recordingInProgress.text = "Recording in Progress"
         recordButton.enabled = false
         let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as! String
         
+        // Create recording name using current date and time
         var currentDateTime = NSDate()
         var formatter = NSDateFormatter()
         formatter.dateFormat = "ddMMyyyy-HHmmss"
@@ -59,6 +67,8 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         audioRecorder.record()
     }
     
+    
+    // Actions to perform when audio recorder finish recording
     func audioRecorderDidFinishRecording(recorder: AVAudioRecorder!, successfully flag: Bool) {
         
         if(flag) {
@@ -70,6 +80,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         }
     }
     
+    // Prepare for segue to PlaySoundsViewcontroller
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
        if(segue.identifier == "stopRecording") {
          let playSoundsVC:PlaySoundsViewController = segue.destinationViewController as! PlaySoundsViewController
@@ -78,6 +89,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
        }
     }
     
+    // Stop button pressed
     @IBAction func stopAudio(sender: UIButton) {
         audioRecorder.stop()
         recordButton.enabled = true
