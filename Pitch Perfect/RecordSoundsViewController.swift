@@ -44,32 +44,52 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         recordingInProgress.textColor = UIColor.redColor()
         recordingInProgress.text = "Recording in Progress"
         recordButton.enabled = false
-        let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as! String
+        let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] 
         
         // Create recording name using current date and time
-        var currentDateTime = NSDate()
-        var formatter = NSDateFormatter()
+        let currentDateTime = NSDate()
+        let formatter = NSDateFormatter()
         formatter.dateFormat = "ddMMyyyy-HHmmss"
-        var recordingName = formatter.stringFromDate(currentDateTime) + ".wav"
-        var pathArray = [dirPath, recordingName]
+        let recordingName = formatter.stringFromDate(currentDateTime) + ".wav"
+        let pathArray = [dirPath, recordingName]
         let filePath = NSURL.fileURLWithPathComponents(pathArray)
-        println(filePath)
+        print(filePath)
+        
         
         //setup audio session
-        var session = AVAudioSession.sharedInstance()
-        session.setCategory(AVAudioSessionCategoryPlayAndRecord, error: nil)
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
+        } catch _ {
+        }
+        
+        do {
+            
+            audioRecorder = try AVAudioRecorder(URL: filePath!, settings: [String:AnyObject]())
+        } catch _ {
+            
+            audioRecorder = nil
+        }
         
         //initialize and prepare the recorder
-        audioRecorder = AVAudioRecorder(URL: filePath, settings: nil, error: nil)
         audioRecorder.delegate = self
         audioRecorder.meteringEnabled = true
         audioRecorder.prepareToRecord()
         audioRecorder.record()
     }
     
+    // Stop button pressed
+    @IBAction func stopAudio(sender: UIButton) {
+        audioRecorder.stop()
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setActive(false)
+        } catch _ {
+        }
+    }
     
     // Actions to perform when audio recorder finish recording
-    func audioRecorderDidFinishRecording(recorder: AVAudioRecorder!, successfully flag: Bool) {
+    func audioRecorderDidFinishRecording(recorder: AVAudioRecorder, successfully flag: Bool) {
         
         if(flag) {
             recordedAudio = RecordedAudio(filePath: recorder.url, title: recorder.url.lastPathComponent!)
@@ -88,14 +108,5 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         playSoundsVC.receivedAudio = data
        }
     }
-    
-    // Stop button pressed
-    @IBAction func stopAudio(sender: UIButton) {
-        audioRecorder.stop()
-        recordButton.enabled = true
-        var audioSession = AVAudioSession.sharedInstance()
-        audioSession.setActive(false, error: nil)
-    }
-
 }
 
