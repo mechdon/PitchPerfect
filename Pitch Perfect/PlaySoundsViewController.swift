@@ -22,6 +22,7 @@ class PlaySoundsViewController: UIViewController {
         
         // Initialise variables
         audioPlayer = try? AVAudioPlayer(contentsOfURL: receivedAudio.filePathUrl)
+        audioPlayer.volume = 50.0
         audioPlayer.enableRate = true
         audioEngine = AVAudioEngine()
         audioFile = try? AVAudioFile(forReading: receivedAudio.filePathUrl)
